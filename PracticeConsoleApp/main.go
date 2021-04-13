@@ -1,27 +1,23 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
+	"io/ioutil"
 	"strings"
 )
 
 func main() {
-	f, err := os.Open("myapp.log")
+	data, err := ioutil.ReadFile("myapp.log")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("File reading error", err)
+		return
 	}
-	defer f.Close()
-	r := bufio.NewReader(f)
-	for {
-		s, err := r.ReadString('\n')
-		if err != nil {
-			break
-		}
-		if strings.Contains(s, "ERROR") {
-			fmt.Println(s)
+	fmt.Println("Errors in error log:")
+	dataAsString := string(data)
+	eachLine := strings.Split(dataAsString, "\n")
+	for _, line := range eachLine {
+		if strings.Contains(line, "ERROR") {
+			fmt.Println(line)
 		}
 	}
 }
